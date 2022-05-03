@@ -1,6 +1,7 @@
 import { CSSProperties } from 'react'
+import { Spacer, Text, useTheme, Link as UILink } from '@nextui-org/react'
+import Link from 'next/link'
 import Image from 'next/image'
-import { Spacer, Text, useTheme } from '@nextui-org/react'
 
 const style: CSSProperties = {
   display: 'flex',
@@ -15,16 +16,30 @@ const Navbar = () => {
   const { theme } = useTheme()
   return (
     <div style={{ ...style, backgroundColor: theme?.colors.gray900.value }}>
-      <Image 
-        width={70} height={70} alt="pokemon icon"
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/132.png" 
-      />
+      <Link href='/' passHref>
+        <UILink css={{ display: 'flex', alignItems: 'center' }}>
+          <Image
+            width={70}
+            height={70}
+            alt='pokemon icon'
+            src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/132.png'
+          />
 
-      <Text color='white' h2>P</Text>
-      <Text color='white' h3>okemon</Text>
-      
-      <Spacer css={{flex: 1}} />
-      <Text color='white'>Favorites</Text>
+          <Text color='white' h2>
+            P
+          </Text>
+          <Text color='white' h3>
+            okemon
+          </Text>
+        </UILink>
+      </Link>
+
+      <Spacer css={{ flex: 1 }} />
+      <Link href='/favorites' passHref>
+        <UILink>
+          <Text color='white'>Favorites</Text>
+        </UILink>
+      </Link>
     </div>
   )
 }
