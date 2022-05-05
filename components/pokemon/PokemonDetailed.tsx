@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Grid, Card, Button, Container, Text, Image, Avatar, Spacer } from '@nextui-org/react'
+import confetti from 'canvas-confetti'
 import { capitalize, localFavorites } from '../../utils'
 import { Pokemon } from '../../interfaces'
 
@@ -13,6 +14,18 @@ const PokemonDetailed = ({ pokemon }: Props) => {
   const onToggleFavorite = () => {
     localFavorites.toggleFavorites(pokemon.id)
     setIsFavorite((s) => !s)
+    if (isFavorite) return
+
+    confetti({
+      zIndex: 9999,
+      particleCount: 100,
+      spread: 160,
+      angle: -100,
+      origin: {
+        x: 1,
+        y: 0,
+      },
+    })
   }
 
   return (
