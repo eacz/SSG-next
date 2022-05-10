@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Grid, Card, Button, Container, Text, Image, Avatar, Spacer } from '@nextui-org/react'
 import confetti from 'canvas-confetti'
-import { capitalize, localFavorites } from '../../utils'
-import { Pokemon } from '../../interfaces'
+import { capitalize, localFavorites, unitsConversion } from '../../utils'
+import { Pokemon, Type } from '../../interfaces'
 
 interface Props {
   pokemon: Pokemon
@@ -28,6 +28,12 @@ const PokemonDetailed = ({ pokemon }: Props) => {
     })
   }
 
+  const getTypesFormatted = (types: Type[]) => {
+    const type = types.map((t) => t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)).join('/')
+    return type
+  }
+
+  //TODO: split this into multiple components
   return (
     <Grid.Container css={{ marginTop: '5px' }} gap={2}>
       <Grid xs={12} sm={4}>
@@ -63,28 +69,54 @@ const PokemonDetailed = ({ pokemon }: Props) => {
           </Card.Body>
         </Card>
       </Grid>
-      <Grid xs={12} sm={3}>
+      <Grid xs={12} sm={2}>
         <Card css={{ display: 'grid' }}>
-          {pokemon.stats.map((s) => (
-            <Container display='flex' direction='row' key={s.stat.name}>
-              <Avatar color='gradient' text={s.stat.name.toUpperCase()} />
-              <Spacer x={0.3} />
-              <Avatar color='success' text={`${s.base_stat}`} />
-            </Container>
-          ))}
+          <Container display='flex' direction='row'>
+            {pokemon.stats.map(({ base_stat, stat }) => (
+              <Grid key={stat.name} xs>
+                <Avatar color='gradient' text={stat.name.toUpperCase()} />
+                <Spacer x={0.3} />
+                <Avatar color='success' text={`${base_stat}`} />
+              </Grid>
+            ))}
+          </Container>
         </Card>
       </Grid>
 
       <Grid xs={12} sm={4}>
         <Card>
-          <Card.Header>
-            <Text h2>Abilites</Text>
-          </Card.Header>
-          <Card.Body>
-            {pokemon.abilities.map(({ ability }) => (
-              <Text key={ability.name}>{capitalize(ability.name)}</Text>
-            ))}
-          </Card.Body>
+          <Text h2>Types</Text>
+
+          <Container>
+            <Text>{getTypesFormatted(pokemon.types)}</Text>
+          </Container>
+
+          <Text h2>Abilites</Text>
+
+          {pokemon.abilities.map(({ ability, is_hidden }) => (
+            <Container
+              css={{ padding: 0, margin: '0 !important' }}
+              display='flex'
+              justify='space-between'
+              key={ability.name}
+            >
+              <Text b>{capitalize(ability.name)}</Text>
+              <Text>{is_hidden ? 'Hidden Abilty' : 'Normal Abilty'}</Text>
+            </Container>
+          ))}
+          <Text h3>Other Info</Text>
+          <Container css={{ padding: 0, margin: '0 !important' }} display='flex' justify='space-between'>
+            <Text b>Weight: </Text>
+            <Text>{unitsConversion.LbsToKg(pokemon.weight)} Kgs</Text>
+          </Container>
+          <Container css={{ padding: 0, margin: '0 !important' }} display='flex' justify='space-between'>
+            <Text b>Height: </Text>
+            <Text>{unitsConversion.formatHeight(pokemon.height)} Mts</Text>
+          </Container>
+          <Container css={{ padding: 0, margin: '0 !important' }} display='flex' justify='space-between'>
+            <Text b>Pokedex N°: </Text>
+            <Text>{pokemon.order}</Text>
+          </Container>
         </Card>
       </Grid>
     </Grid.Container>
