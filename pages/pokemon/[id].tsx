@@ -42,6 +42,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       pokemon: await getPokemonInfo(id),
     },
+    //the page will be recreated every 86400 seconds (one day) when a request comes in after that period
+    revalidate: 86400,
   }
 }
 
