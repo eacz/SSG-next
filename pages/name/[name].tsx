@@ -3,7 +3,7 @@ import { pokeApi } from '../../api'
 import { Layout } from '../../components/layouts'
 import { PokemonDetailed } from '../../components/pokemon'
 import { Pokemon, PokemonListResponse } from '../../interfaces'
-import { getPokemonInfo } from '../../utils'
+import { capitalize, getPokemonInfo } from '../../utils'
 
 interface Props {
   pokemon: Pokemon
@@ -11,7 +11,7 @@ interface Props {
 
 const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
   return (
-    <Layout title='pokemon'>
+    <Layout title={capitalize(pokemon.name)}>
       <PokemonDetailed pokemon={pokemon} />
     </Layout>
   )
@@ -20,10 +20,21 @@ const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { name } = params as { name: string }
 
+  const pokemon = await getPokemonInfo(name)
+
+  if (!pokemon) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
   return {
     props: {
-      pokemon: await getPokemonInfo(name),
+      pokemon,
     },
+    revalidate: 86400,
   }
 }
 
@@ -32,7 +43,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
   return {
     paths: pokemons.data.results.map(({ name }) => ({ params: { name } })),
-    fallback: false,
+    fallback: 'blocking',
   }
 }
 
